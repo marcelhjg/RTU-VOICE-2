@@ -1,0 +1,281 @@
+/* =====================================================================
+   styles/globals.css
+   Base styles used by EVERY page: colors, fonts, header, buttons,
+   the landing page, login/register cards, and form fields.
+   (Student / Admin / Department page styles are in app.css.)
+   The @media (max-width: 767px) block at the bottom = phone layout.
+   ===================================================================== */
+:root {
+  /* Main brand colors. Change a color HERE and it changes everywhere it is used. */
+  --blue: #104496;
+  --gold: #d7a121;
+  --yellow: #efb41f;
+  --white: #ffffff;
+
+  /* Other colors: text, borders, error red, and the yellow notice banner */
+  --blue-top: #1c58bd;           /* top of the button gradient, ends at --blue */
+  --navy: #12224a;               /* headings */
+  --ink: #1e293b;                /* labels */
+  --slate: #64748b;              /* secondary text */
+  --line: #dde3ee;               /* input / card borders */
+  --danger: #b42318;
+  --danger-line: #e5484d;
+  --notice-bg: #fdf1cf;
+  --notice-line: #efd48a;
+  --notice-ink: #7a5a00;
+
+  
+  
+
+  /* Corner roundness: small (inputs/buttons), medium (cards), large (panels) */
+  --r-control: 8px;
+  --r-card: 12px;
+  --r-panel: 16px;
+}
+
+/* Make width/height include padding and border (easier to size things). */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+/* The whole page: default font, text size, text color and page background. */
+body {
+  margin: 0;
+  font-family: var(--font-sans), system-ui, Arial, sans-serif;
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--ink);
+  background: #e8ecf5;
+  overflow-x: hidden;
+}
+h1, h2, p, ol { margin: 0; padding: 0; }
+ol { list-style: none; }
+a { color: var(--blue); text-decoration: none; }
+a:hover { text-decoration: underline; }
+img { max-width: 100%; height: auto; }
+:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+/* Helper classes: .only-desktop hides on phones, .only-mobile hides on desktop. */
+.only-mobile { display: none; }
+
+/* ---------- Page shell ---------- */
+/* Every page is a full-height column with a soft gradient background. */
+.page {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background:
+    radial-gradient(900px 520px at 0% 0%, rgba(239, 180, 31, 0.16), transparent 62%),
+    linear-gradient(135deg, #f8f9fc 0%, #eef1f8 45%, #dfe5f2 100%);
+}
+
+/* ---------- Header ---------- */
+/* .site-header = white top bar (72px tall). .logo = logo picture + text. .nav = Login/Register buttons. */
+.site-header { background: var(--white); border-bottom: 1px solid var(--line); }
+.site-header-inner {
+  height: 72px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.logo { display: inline-flex; align-items: center; gap: 12px; color: var(--navy); }
+.logo:hover { text-decoration: none; }
+.logo-text { font-family: var(--font-serif), Georgia, serif; font-weight: 700; font-size: 18px; color: var(--navy); }
+.logo-img { display: block; height: auto; }
+.nav { display: flex; align-items: center; gap: 16px; }
+
+/* ---------- Buttons ---------- */
+/* .btn = shared button shape. The .btn-primary/outline/nav classes below change its look. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  padding: 0 24px;
+  border-radius: var(--r-control);
+  border: 1px solid transparent;
+  font: 600 15px/1 var(--font-sans), system-ui, sans-serif;
+  cursor: pointer;
+  text-decoration: none;
+  transition: filter 0.15s, box-shadow 0.15s, background-color 0.15s;
+}
+.btn:hover { text-decoration: none; }
+.btn-pill { border-radius: 999px; padding: 0 22px; }
+.btn-block { width: 100%; height: 46px; }
+.btn-primary {
+  color: var(--white);
+  background: linear-gradient(180deg, var(--blue-top), var(--blue));
+  box-shadow: 0 6px 14px rgba(16, 68, 150, 0.28);
+}
+.btn-primary:hover { filter: brightness(1.08); }
+.btn-primary:active { filter: brightness(0.95); }
+.btn-outline { color: var(--blue); background: var(--white); border-color: var(--line); }
+.btn-outline:hover { border-color: var(--blue); background: #f5f8fe; }
+.btn-nav { color: #334155; background: transparent; }
+.btn-nav:hover { color: var(--blue); background: rgba(16, 68, 150, 0.06); }
+.mt-submit { margin-top: 16px; }
+
+/* ---------- Notice ---------- */
+/* The yellow warning banner under the header. */
+.notice {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 24px;
+  background: var(--notice-bg);
+  border-bottom: 1px solid var(--notice-line);
+  color: var(--notice-ink);
+  font-size: 13px;
+}
+.notice svg { flex: none; width: 16px; height: 16px; }
+
+/* ---------- Landing ---------- */
+/* Landing page: .hero = main area, .hero-title = big heading, .steps = the 3 step cards. */
+.hero { flex: 1; padding: 64px 24px 48px; text-align: center; }
+.eyebrow { font-size: 12px; font-weight: 700; letter-spacing: 0.22em; color: var(--gold); margin-bottom: 16px; }
+.hero-title {
+  font-family: var(--font-serif), Georgia, serif;
+  font-weight: 700;
+  font-size: clamp(28px, 4vw + 12px, 56px);
+  line-height: 1.1;
+  color: var(--navy);
+}
+.gold { color: var(--gold); }
+.hero-sub { margin-top: 16px; color: var(--slate); font-size: 16px; }
+/* The Login + Register buttons under the subtitle. justify-content: center = centered. */
+.hero-actions { margin-top: 32px; display: flex; gap: 16px; justify-content: center; }
+.steps {
+  margin: 48px auto 0;
+  max-width: 800px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  text-align: left;
+}
+.step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 24px;
+  background: var(--white);
+  border-radius: var(--r-panel);
+  box-shadow: 0 10px 28px rgba(18, 34, 74, 0.08);
+}
+.tile { display: grid; place-items: center; width: 44px; height: 44px; border-radius: var(--r-control); margin-bottom: 8px; }
+.tile svg { width: 18px; height: 18px; }
+.tile-gold { background: #f3e6c6; color: var(--gold); }
+.tile-blue { background: #e2ebf9; color: var(--blue); }
+.step-title { font-size: 16px; font-weight: 600; color: var(--navy); }
+.step-text { font-size: 13px; color: var(--slate); }
+.step-num {
+  position: absolute; top: 12px; right: 20px;
+  font-family: var(--font-serif), Georgia, serif;
+  font-weight: 700; font-size: 44px; line-height: 1; color: #e6ecf8;
+}
+
+/* ---------- Auth ---------- */
+/* Login / register / forgot / verify: .auth-card = white card in the middle. */
+.auth-main { flex: 1; display: flex; justify-content: center; align-items: flex-start; padding: 48px 16px; }
+.auth-card {
+  width: 100%;
+  max-width: 484px;            /* 420px form + 32px padding each side */
+  padding: 32px;
+  background: var(--white);
+  border-radius: var(--r-panel);
+  box-shadow: 0 12px 32px rgba(18, 34, 74, 0.1);
+}
+.auth-head { text-align: center; margin-bottom: 16px; }
+.auth-emblem { display: flex; justify-content: center; margin-bottom: 4px; }
+.auth-title { font-family: var(--font-serif), Georgia, serif; font-weight: 700; font-size: 24px; line-height: 1.25; color: var(--navy); }
+.auth-sub { margin-top: 4px; font-size: 14px; color: var(--slate); }
+.accent { color: var(--blue); font-weight: 700; }
+
+/* Form fields: .field = one label + input group, .input = the text box, .field-error = red message. */
+.field { margin-bottom: 12px; }
+.row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.label { display: block; margin-bottom: 8px; font-size: 13px; font-weight: 600; color: var(--navy); }
+.control { position: relative; }
+.input {
+  width: 100%;
+  height: 46px;
+  padding: 0 14px;
+  font: 400 15px/1 var(--font-sans), system-ui, sans-serif;
+  color: var(--navy);
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--r-control);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.input::placeholder { color: #94a3b8; }
+.input:hover { border-color: #c3cde0; }
+.input:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(16, 68, 150, 0.14); }
+.input-has-trailing { padding-right: 44px; }
+.input-error, .input-error:hover { border-color: var(--danger-line); }
+.input-error:focus { border-color: var(--danger-line); box-shadow: 0 0 0 3px rgba(229, 72, 77, 0.14); }
+.field-error { display: flex; align-items: center; gap: 6px; margin-top: 6px; font-size: 12px; color: var(--danger); }
+.field-error svg { width: 13px; height: 13px; flex: none; }
+.field-hint { margin-top: 6px; font-size: 13px; color: var(--slate); }
+.eye {
+  position: absolute; top: 0; right: 0; height: 100%; width: 44px;
+  display: grid; place-items: center; border: 0; background: transparent; color: var(--ink); cursor: pointer;
+  border-radius: var(--r-control);
+}
+.eye svg { width: 16px; height: 16px; }
+.eye:hover { color: var(--blue); }
+
+.forgot { text-align: right; margin: -4px 0 16px; font-size: 13px; font-weight: 700; }
+.foot { margin-top: 16px; text-align: center; font-size: 13px; color: var(--slate); }
+.foot a, .foot .accent { font-weight: 700; }
+.link-btn { padding: 0; border: 0; background: none; font: 700 13px var(--font-sans), sans-serif; color: var(--blue); cursor: pointer; }
+.link-btn:hover { text-decoration: underline; }
+
+/* Verification code: the 6 digit boxes */
+.code { display: flex; justify-content: center; gap: 10px; margin: 20px 0 20px; }
+.code-box {
+  flex: 0 1 52px; min-width: 0; height: 60px; padding: 0;
+  text-align: center; font: 700 22px/1 var(--font-sans), sans-serif; color: var(--navy);
+  background: var(--white); border: 1px solid var(--line); border-radius: var(--r-control);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.code-box:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(16, 68, 150, 0.14); }
+.code-error { justify-content: center; margin: -8px 0 12px; }
+
+/* ---------- Mobile ---------- */
+/* Everything inside this block only applies on phones and small windows (767px wide or less). */
+@media (max-width: 767px) {
+  .only-desktop { display: none !important; }
+  .only-mobile { display: inline; }
+
+  .site-header-inner { height: 56px; padding: 0 12px; }
+  .logo { gap: 8px; }
+  .logo-text { font-size: 14px; }
+  .logo-img { width: 34px; }
+  .nav { gap: 8px; }
+  .btn { height: 40px; font-size: 14px; }
+  .btn-pill { padding: 0 16px; height: 34px; }
+  .btn-block { height: 44px; }
+
+  .notice { align-items: flex-start; justify-content: flex-start; padding: 8px 12px; font-size: 11px; }
+  .notice svg { width: 14px; height: 14px; margin-top: 1px; }
+
+  .hero { padding: 24px 16px 32px; text-align: left; }
+  .hero-title { font-size: 28px; text-align: center; }
+  .hero-sub { margin-top: 8px; font-size: 14px; text-align: center; }
+  .hero-actions { margin-top: 20px; justify-content: center; gap: 12px; } /* still centered on phones */
+  .steps { margin-top: 24px; grid-template-columns: 1fr; gap: 12px; }
+  .step { flex-direction: row; align-items: center; gap: 12px; padding: 10px 12px; border-radius: var(--r-card); }
+  .tile { margin: 0; width: 40px; height: 40px; }
+  .step-title { font-size: 14px; }
+
+  .auth-main { padding: 16px 12px; }
+  .auth-card { padding: 16px; }
+  .auth-title { font-size: 20px; }
+  .auth-sub { font-size: 13px; }
+  .row-2 { grid-template-columns: 1fr; gap: 0; }
+  .code { gap: 6px; }
+  .code-box { height: 48px; font-size: 20px; }
+}
