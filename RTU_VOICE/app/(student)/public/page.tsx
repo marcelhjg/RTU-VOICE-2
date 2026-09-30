@@ -4,7 +4,7 @@
  * -----------------------------------------------------------------
  * PUBLIC DASHBOARD: shows validated complaints of everyone (no names) so
  * the campus can see what is being reported and its progress.
- * Filters: Status and Category dropdowns. Shows 4 cards per page.
+ * Filters: Status and Category dropdowns.
  */
 import { useState } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@/components/Icons";

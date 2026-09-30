@@ -16,9 +16,9 @@ export default function ConsoleHeader({ label, shortLabel }: { label: string; sh
   return (
     <header className="console-header">
       <div className="console-inner">
-        {/* Logo sits on a white rounded box so it is visible on the dark background */}
+        {/* Match the circular logo holder used in the student side menu. */}
         <div className="logo">
-          <span className="logo-box">
+          <span className="logo-box round">
             <LogoMark size={36} />
           </span>
           <span className="logo-text">RTU Voice</span>

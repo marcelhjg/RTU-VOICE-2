@@ -36,7 +36,7 @@ export function LogoMark({ size = 40 }: { size?: number }) {
       alt="RTU Voice logo"
       width={size}
       height={Math.round(size * (LOGO_HEIGHT / LOGO_WIDTH))} // keeps the picture's proportion
-      priority // load it right away because it is at the top of the page
+      style={{ height: "auto" }}
       className="logo-img"
     />
   );

@@ -2,7 +2,7 @@
 /**
  * app/(student)/dashboard/page.tsx  (URL: /dashboard)
  * -----------------------------------------------------------------
- * The student HOME page: a welcome message and two big cards -
+ * The student HOME page: a welcome message -
  * "Submit a New Complaint" and "Track an Old Complaint".
  */
 import Link from "next/link";

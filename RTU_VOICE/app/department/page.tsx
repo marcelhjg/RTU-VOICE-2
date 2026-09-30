@@ -8,6 +8,7 @@
  * each complaint's status (Assigned / In Progress / Resolved).
  */
 import { useState } from "react";
+import { ComplaintDetailsModal } from "@/components/console/ConsoleModals";
 import ConsoleHeader from "@/components/console/ConsoleHeader";
 import { SearchIcon } from "@/components/Icons";
 import RequireRole from "@/components/RequireRole";
@@ -28,6 +29,7 @@ function DepartmentPortal() {
   // Search text and status filter.
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState("");
+  const [detailsId, setDetailsId] = useState<string | null>(null);
 
   const dept = user?.department; // which department this account belongs to (one of the six in types/complaint.ts)
   // Only complaints assigned to THIS department and already in progress of work.
@@ -39,6 +41,7 @@ function DepartmentPortal() {
   const rows = mine
     .filter((c) => c.id.toLowerCase().includes(q) && (!filter || c.status === filter))
     .sort((a, b) => byNewest(a.assignedAt ?? a.submittedAt, b.assignedAt ?? b.submittedAt));
+  const details = mine.find((c) => c.id === detailsId);
 
   // The status dropdown used to update a complaint (reused by rows and cards).
   const updater = (c: Complaint, id: string) => (
@@ -56,6 +59,10 @@ function DepartmentPortal() {
     <div className="page">
       <ConsoleHeader label={`${dept ?? ""} Department`} shortLabel={`${dept ?? ""} Dept.`} />
       <main className="app-main console-main">
+        <div className="console-page-intro">
+          <h1 className="section-title">Department Overview</h1>
+          <p className="page-sub">Review complaints assigned to your department.</p>
+        </div>
         {/* Statistic cards */}
         <div className="stats stats-3">
           <StatCard label="Assigned" value={count("Assigned")} tone="assigned" />
@@ -97,7 +104,11 @@ function DepartmentPortal() {
                       <td>
                         <PriorityBadge priority={c.priority} />
                       </td>
-                      <td>{c.title}</td>
+                      <td>
+                        <button type="button" className="row-link" onClick={() => setDetailsId(c.id)}>
+                          {c.title}
+                        </button>
+                      </td>
                       <td className="muted">{excerpt(c.description, 48)}</td>
                       <td className="nowrap">{shortDate(c.assignedAt ?? c.submittedAt)}</td>
                       <td>
@@ -116,7 +127,9 @@ function DepartmentPortal() {
                     <h2 className="mcard-title">{shortId(c.id)}</h2>
                     <StatusBadge status={c.status} />
                   </div>
-                  <p className="mcard-meta">{c.title}</p>
+                  <button type="button" className="row-link mcard-title" onClick={() => setDetailsId(c.id)}>
+                    {c.title}
+                  </button>
                   <p className="mcard-meta">{excerpt(c.description, 90)}</p>
                   <p className="prio">
                     Priority: <PriorityBadge priority={c.priority} /> <span className="muted">• Assigned {shortDate(c.assignedAt ?? c.submittedAt)}</span>
@@ -128,6 +141,7 @@ function DepartmentPortal() {
           </>
         )}
       </main>
+      {details && <ComplaintDetailsModal complaint={details} onClose={() => setDetailsId(null)} />}
     </div>
   );
 }

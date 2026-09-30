@@ -3,7 +3,7 @@
  * app/admin/page.tsx  (URL: /admin)
  * -----------------------------------------------------------------
  * The ADMIN console (only the admin role can open it). Two tabs:
- *   1) Pending Validation -> new complaints: Approve / Reject / Assign Dept.
+ *   1) Pending Validation -> new complaints: Reject / Assign Dept.
  *   2) Master Tracking    -> assigned complaints: Reassign
  * Also has statistic cards, a title search, and a newest/oldest sort.
  */
@@ -26,7 +26,7 @@ type Sort = "newest" | "oldest";
 
 // The actual admin page (protected by RequireRole at the bottom of this file).
 function AdminConsole() {
-  const { complaints, approve, reject, assign, reassign } = useComplaints();
+  const { complaints, reject, assign, reassign } = useComplaints();
   // Page state: current tab, search text, sort order, and which pop-up (if any) is open.
   const [tab, setTab] = useState<Tab>("pending");
   const [query, setQuery] = useState("");
@@ -56,12 +56,9 @@ function AdminConsole() {
   const details = byId(detailsId);
   const reassigning = byId(reassignId);
 
-  // The Approve / Reject / Assign Dept. buttons (reused by table rows and phone cards).
+  // The Reject / Assign Dept. buttons (reused by table rows and phone cards).
   const pendingActions = (c: Complaint) => (
     <div className="actions">
-      <Button small variant="approve" disabled={c.approved} onClick={() => approve(c.id)}>
-        {c.approved ? "Approved" : "Approve"}
-      </Button>
       <Button small variant="reject" onClick={() => reject(c.id)}>
         Reject
       </Button>

@@ -7,10 +7,11 @@
  *   2) AssignDepartmentModal -> choose a department for a complaint
  *   3) ReassignModal         -> move a complaint to another department + reason
  */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Complaint, Department } from "@/types/complaint";
 import { DEPARTMENTS } from "@/types/complaint";
-import { mediumDate, shortId } from "@/lib/format";
+import { fileSize, mediumDate, shortId } from "@/lib/format";
+import { getEvidence } from "@/lib/evidenceStorage";
 import Button from "../Button";
 import Modal from "../Modal";
 import Select from "../Select";
@@ -19,6 +20,37 @@ import Textarea from "../Textarea";
 
 // 1) Shows every detail of a complaint (view only).
 export function ComplaintDetailsModal({ complaint, onClose }: { complaint: Complaint; onClose: () => void }) {
+  const [evidenceUrl, setEvidenceUrl] = useState<string | null>(null);
+  const [evidenceType, setEvidenceType] = useState<string | null>(null);
+  const [evidenceLoaded, setEvidenceLoaded] = useState(!complaint.evidence);
+
+  useEffect(() => {
+    let active = true;
+    let objectUrl: string | null = null;
+    setEvidenceUrl(null);
+    setEvidenceType(null);
+    setEvidenceLoaded(!complaint.evidence);
+    if (!complaint.evidence) return;
+
+    setEvidenceLoaded(false);
+    void getEvidence(complaint.id)
+      .then((blob) => {
+        if (!active || !blob) return;
+        objectUrl = URL.createObjectURL(blob);
+        setEvidenceUrl(objectUrl);
+        setEvidenceType(blob.type);
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (active) setEvidenceLoaded(true);
+      });
+
+    return () => {
+      active = false;
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, [complaint.id, complaint.evidence]);
+
   return (
     <Modal title="Complaint Details" onClose={onClose} className="modal-md">
       <dl className="kv-list">
@@ -33,6 +65,28 @@ export function ComplaintDetailsModal({ complaint, onClose }: { complaint: Compl
         <div className="kv kv-stack">
           <dt>Description</dt>
           <dd className="kv-text">{complaint.description}</dd>
+        </div>
+        <div className="kv kv-stack">
+          <dt>Evidence</dt>
+          <dd>
+            {complaint.evidence ? (
+              <div className="evidence-file">
+                {evidenceUrl && evidenceType?.startsWith("image/") && (
+                  <img className="evidence-image" src={evidenceUrl} alt={`Evidence for ${complaint.title}`} />
+                )}
+                {evidenceUrl && evidenceType === "application/pdf" && (
+                  <iframe className="evidence-pdf" src={evidenceUrl} title={`Evidence for ${complaint.title}`} />
+                )}
+                <div className="evidence-meta">
+                  <span>{complaint.evidence.name} ({fileSize(complaint.evidence.size)})</span>
+                  {evidenceUrl && <a href={evidenceUrl} target="_blank" rel="noreferrer">Open file</a>}
+                  {evidenceLoaded && !evidenceUrl && <span>Preview unavailable for this attachment.</span>}
+                </div>
+              </div>
+            ) : (
+              "No file attached."
+            )}
+          </dd>
         </div>
         <div className="kv">
           <dt>Date submitted</dt>

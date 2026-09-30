@@ -16,6 +16,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import type { ReactNode } from "react";
 import type { Complaint, ComplaintStatus, Department, NewComplaintInput } from "@/types/complaint";
 import { generateTrackingId } from "./format";
+import { saveEvidence } from "./evidenceStorage";
 import { mockPriority } from "./priority";
 import { SEED_COMPLAINTS } from "./seed";
 import { readJSON, writeJSON } from "./storage";
@@ -30,7 +31,7 @@ interface ComplaintsContextValue {
   complaints: Complaint[];
   /** False until the stored data has been read on the client. */
   loaded: boolean;
-  submit: (input: NewComplaintInput) => Complaint; // student files a new complaint
+  submit: (input: NewComplaintInput, attachment?: File) => Promise<Complaint>; // student files a new complaint
   approve: (id: string) => void; // admin validates a complaint
   reject: (id: string) => void; // admin rejects a complaint
   assign: (id: string, department: Department) => void; // admin sends it to a department
@@ -68,7 +69,7 @@ export function ComplaintProvider({ children }: { children: ReactNode }) {
 
   // Student submits a new complaint: it starts as "Pending" and not yet approved.
   const submit = useCallback(
-    (input: NewComplaintInput): Complaint => {
+    async (input: NewComplaintInput, attachment?: File): Promise<Complaint> => {
       const created: Complaint = {
         id: generateTrackingId(new Set(complaints.map((c) => c.id))), // unique tracking ID
         title: input.title,
@@ -80,6 +81,7 @@ export function ComplaintProvider({ children }: { children: ReactNode }) {
         evidence: input.evidence,
         ownerEmail: input.ownerEmail,
       };
+      if (attachment) await saveEvidence(created.id, attachment);
       setComplaints((list) => [created, ...list]); // newest goes to the top
       return created;
     },

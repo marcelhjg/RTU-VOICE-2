@@ -50,6 +50,7 @@ export default function SubmitPage() {
   const [created, setCreated] = useState<Complaint | null>(null);
   const [copied, setCopied] = useState(false);
   const picker = useRef<HTMLInputElement>(null);
+  const uploadFile = useRef<File | null>(null);
 
   // Mock upload progress.
   useEffect(() => {
@@ -72,6 +73,7 @@ export default function SubmitPage() {
     setErrors((e) => ({ ...e, evidence: undefined }));
     setProgress(0);
     setFile({ name: f.name, size: f.size });
+    uploadFile.current = f;
   };
 
   // Dropping a file onto the upload box.
@@ -89,7 +91,7 @@ export default function SubmitPage() {
   };
 
   // Runs when "Submit Complaint" is pressed: validate, then save the complaint.
-  const onSubmit = (e: FormEvent) => {
+  const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const found: Errors = {};
     if (!title.trim()) found.title = "Enter a subject for your complaint";
@@ -97,7 +99,15 @@ export default function SubmitPage() {
     if (!file) found.evidence = "Attach supporting evidence";
     setErrors(found);
     if (Object.keys(found).length > 0 || !user) return;
-    setCreated(submit({ title: title.trim(), category, description: description.trim(), evidence: file ?? undefined, ownerEmail: user.email }));
+    try {
+      const createdComplaint = await submit(
+        { title: title.trim(), category, description: description.trim(), evidence: file ?? undefined, ownerEmail: user.email },
+        uploadFile.current ?? undefined,
+      );
+      setCreated(createdComplaint);
+    } catch {
+      setErrors((current) => ({ ...current, evidence: "Could not save the attachment. Please try again." }));
+    }
   };
 
   // "Copy ID" button in the success pop-up.
@@ -164,7 +174,7 @@ export default function SubmitPage() {
               <div className="file">
                 <span className="file-name">{file.name}</span>
                 <span className="file-size">{fileSize(file.size)}</span>
-                <button type="button" className="file-x" aria-label={`Remove ${file.name}`} onClick={() => { setFile(null); setProgress(0); }}>
+                <button type="button" className="file-x" aria-label={`Remove ${file.name}`} onClick={() => { setFile(null); uploadFile.current = null; setProgress(0); }}>
                   <CloseIcon />
                 </button>
               </div>

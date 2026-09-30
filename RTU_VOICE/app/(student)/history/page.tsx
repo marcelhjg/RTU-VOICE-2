@@ -2,8 +2,7 @@
 /**
  * app/(student)/history/page.tsx  (URL: /history)
  * -----------------------------------------------------------------
- * MY COMPLAINT HISTORY: a table (or cards on small screens) of every
- * complaint the logged-in student submitted, newest first.
+ * MY COMPLAINT HISTORY
  */
 import Button from "@/components/Button";
 import { StatusBadge } from "@/components/StatusBadge";
