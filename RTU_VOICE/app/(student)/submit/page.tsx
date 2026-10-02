@@ -4,7 +4,7 @@
  * -----------------------------------------------------------------
  * SUBMIT A COMPLAINT: the form students fill in (title, category,
  * description, evidence file). On success a pop-up shows the tracking ID.
- * Rules: evidence is required, max 5MB, image or PDF only.
+ * Rules: evidence is optional; uploaded files must be images or PDFs under 5MB.
  */
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -96,7 +96,6 @@ export default function SubmitPage() {
     const found: Errors = {};
     if (!title.trim()) found.title = "Enter a subject for your complaint";
     if (description.trim().length < 10) found.description = "Describe the issue in at least 10 characters";
-    if (!file) found.evidence = "Attach supporting evidence";
     setErrors(found);
     if (Object.keys(found).length > 0 || !user) return;
     try {
@@ -145,7 +144,7 @@ export default function SubmitPage() {
         {/* Evidence upload: click, press Enter, or drag a file into the box */}
         <div className="field">
           <span className="label" id="evidence-label">
-            Evidence (5MB maximum) *
+            Evidence (optional, 5MB maximum)
           </span>
           <input ref={picker} type="file" accept="image/*,application/pdf" hidden onChange={(e) => { accept(e.target.files?.[0]); e.target.value = ""; }} />
           <div

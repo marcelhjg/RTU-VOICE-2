@@ -7,7 +7,8 @@
  * Filters: Status and Category dropdowns.
  */
 import { useState } from "react";
-import { ChevronLeftIcon, ChevronRightIcon } from "@/components/Icons";
+import EmptyState from "@/components/EmptyState";
+import { ChevronLeftIcon, ChevronRightIcon, FolderSearchIcon } from "@/components/Icons";
 import Select from "@/components/Select";
 import { StatusBadge } from "@/components/StatusBadge";
 import { useComplaints } from "@/lib/complaints";
@@ -65,7 +66,12 @@ export default function PublicDashboardPage() {
 
       {/* Nothing matches -> message. Otherwise -> the complaint cards */}
       {shown.length === 0 ? (
-        <p className="empty-note">No complaints match these filters.</p>
+        <EmptyState
+          icon={<FolderSearchIcon />}
+          title="No public reports found"
+          description="No complaints match these filters."
+          action={<button type="button" className="link-btn" onClick={clear}>Clear filters</button>}
+        />
       ) : (
         <ul className="pgrid">
           {shown.map((c) => (

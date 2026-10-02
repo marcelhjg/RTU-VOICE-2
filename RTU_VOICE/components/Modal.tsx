@@ -12,6 +12,7 @@ import { CloseIcon } from "./Icons";
 
 interface ModalProps {
   title?: string;
+  headerIcon?: ReactNode;
   onClose?: () => void;
   /** When false the dialog has no close button and ignores Esc / backdrop clicks. */
   dismissible?: boolean;
@@ -24,7 +25,7 @@ const FOCUSABLE =
   'a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
 
 /** Render conditionally: mounted = open. Locks page scroll and traps focus while open. */
-export default function Modal({ title, onClose, dismissible = true, className = "", children }: ModalProps) {
+export default function Modal({ title, headerIcon, onClose, dismissible = true, className = "", children }: ModalProps) {
   const ref = useRef<HTMLDivElement>(null); // points to the pop-up box
   const closeRef = useRef(onClose);
   closeRef.current = onClose;
@@ -75,6 +76,7 @@ export default function Modal({ title, onClose, dismissible = true, className = 
         {/* Title bar with the X close button */}
         {title && (
           <div className="modal-head">
+            {headerIcon && <div className="modal-head-icon">{headerIcon}</div>}
             <h2 className="modal-title">{title}</h2>
             {dismissible && onClose && (
               <button type="button" className="modal-x" aria-label="Close" onClick={onClose}>

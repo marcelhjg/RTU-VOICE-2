@@ -2,10 +2,11 @@
 /**
  * components/console/ConsoleModals.tsx
  * -----------------------------------------------------------------
- * The three pop-ups used by the Admin page:
+ * The pop-ups used by the Admin page:
  *   1) ComplaintDetailsModal -> read-only details of one complaint
- *   2) AssignDepartmentModal -> choose a department for a complaint
- *   3) ReassignModal         -> move a complaint to another department + reason
+ *   2) RejectComplaintModal  -> confirm rejecting a complaint
+ *   3) AssignDepartmentModal -> choose a department for a complaint
+ *   4) ReassignModal         -> move a complaint to another department + reason
  */
 import { useEffect, useState } from "react";
 import type { Complaint, Department } from "@/types/complaint";
@@ -103,6 +104,33 @@ export function ComplaintDetailsModal({ complaint, onClose }: { complaint: Compl
           <dd>{complaint.department ?? "Not assigned"}</dd>
         </div>
       </dl>
+    </Modal>
+  );
+}
+
+// 2) Admin confirms the complaint before its status changes to Rejected.
+export function RejectComplaintModal({
+  complaint,
+  onClose,
+  onConfirm,
+}: {
+  complaint: Complaint;
+  onClose: () => void;
+  onConfirm: () => void;
+}) {
+  return (
+    <Modal title="Confirm Rejection" onClose={onClose} className="modal-md">
+      <p className="modal-note">
+        Are you sure you want to reject this complaint? Its status will change to <strong>Rejected</strong>.
+      </p>
+      <div className="modal-actions">
+        <Button variant="outline" onClick={onClose}>
+          Cancel
+        </Button>
+        <Button variant="reject" onClick={onConfirm}>
+          Reject Complaint
+        </Button>
+      </div>
     </Modal>
   );
 }

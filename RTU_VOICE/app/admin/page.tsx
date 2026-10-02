@@ -10,7 +10,7 @@
 import { useState } from "react";
 import Button from "@/components/Button";
 import ConsoleHeader from "@/components/console/ConsoleHeader";
-import { AssignDepartmentModal, ComplaintDetailsModal, ReassignModal } from "@/components/console/ConsoleModals";
+import { AssignDepartmentModal, ComplaintDetailsModal, RejectComplaintModal, ReassignModal } from "@/components/console/ConsoleModals";
 import { SearchIcon } from "@/components/Icons";
 import RequireRole from "@/components/RequireRole";
 import Select from "@/components/Select";
@@ -32,6 +32,7 @@ function AdminConsole() {
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<Sort>("newest");
   const [detailsId, setDetailsId] = useState<string | null>(null);
+  const [rejectId, setRejectId] = useState<string | null>(null);
   const [assignId, setAssignId] = useState<string | null>(null);
   const [reassignId, setReassignId] = useState<string | null>(null);
 
@@ -54,12 +55,13 @@ function AdminConsole() {
   // Find the complaint that a pop-up should show.
   const byId = (id: string | null) => complaints.find((c) => c.id === id);
   const details = byId(detailsId);
+  const rejecting = byId(rejectId);
   const reassigning = byId(reassignId);
 
   // The Reject / Assign Dept. buttons (reused by table rows and phone cards).
   const pendingActions = (c: Complaint) => (
     <div className="actions">
-      <Button small variant="reject" onClick={() => reject(c.id)}>
+      <Button small variant="reject" onClick={() => setRejectId(c.id)}>
         Reject
       </Button>
       <Button small variant="assign" onClick={() => setAssignId(c.id)}>
@@ -226,6 +228,16 @@ function AdminConsole() {
 
       {/* Pop-ups: only one is open at a time */}
       {details && <ComplaintDetailsModal complaint={details} onClose={() => setDetailsId(null)} />}
+      {rejecting && (
+        <RejectComplaintModal
+          complaint={rejecting}
+          onClose={() => setRejectId(null)}
+          onConfirm={() => {
+            reject(rejecting.id);
+            setRejectId(null);
+          }}
+        />
+      )}
       {assignId && (
         <AssignDepartmentModal
           onClose={() => setAssignId(null)}

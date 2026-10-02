@@ -10,7 +10,9 @@ import { useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import type { FormEvent } from "react";
 import Button from "@/components/Button";
-import { SearchIcon } from "@/components/Icons";
+import ComplaintProgress from "@/components/ComplaintProgress";
+import EmptyState from "@/components/EmptyState";
+import { FolderSearchIcon, SearchIcon } from "@/components/Icons";
 import { StatusBadge } from "@/components/StatusBadge";
 import { useComplaints } from "@/lib/complaints";
 import { longDate } from "@/lib/format";
@@ -59,13 +61,17 @@ function TrackInner() {
             </div>
             <StatusBadge status={result.status} />
           </div>
+          <ComplaintProgress status={result.status} />
         </section>
       )}
       {/* Not found: show an error message */}
       {queried && !result && loaded && (
-        <p className="field-error center-row" role="alert">
-          No complaint found for that tracking ID. Check the ID and try again.
-        </p>
+        <EmptyState
+          icon={<FolderSearchIcon />}
+          title="No report found"
+          description="Check the tracking ID and try again."
+          role="alert"
+        />
       )}
     </div>
   );

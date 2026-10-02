@@ -24,6 +24,6 @@ export interface ResetFormValues {
 // For any form: an optional error message for each field.
 export type FieldErrors<T> = Partial<Record<keyof T, string>>;
 
-/** Digits entered so far (0–6 characters, digits only). */
+/** Alphanumeric characters entered so far (0–6 characters). */
 export type VerificationCode = string;
-export const CODE_LENGTH = 6; // the verification code has 6 digits
+export const CODE_LENGTH = 6; // the verification code has 6 characters

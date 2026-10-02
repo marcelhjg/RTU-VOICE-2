@@ -1,10 +1,14 @@
 "use client";
+import { useState } from "react";
 /**
  * app/(student)/history/page.tsx  (URL: /history)
  * -----------------------------------------------------------------
  * MY COMPLAINT HISTORY
  */
 import Button from "@/components/Button";
+import { ComplaintDetailsModal } from "@/components/console/ConsoleModals";
+import EmptyState from "@/components/EmptyState";
+import { EmptyFolderIcon } from "@/components/Icons";
 import { StatusBadge } from "@/components/StatusBadge";
 import { useAuth } from "@/lib/auth";
 import { useComplaints } from "@/lib/complaints";
@@ -14,8 +18,10 @@ import { shortDate } from "@/lib/format";
 export default function HistoryPage() {
   const { user } = useAuth();
   const { complaints } = useComplaints();
+  const [detailsId, setDetailsId] = useState<string | null>(null);
   // Keep only this student's complaints (matched by email) and sort newest first.
   const mine = complaints.filter((c) => c.ownerEmail === user?.email).sort((a, b) => byNewest(a.submittedAt, b.submittedAt));
+  const details = mine.find((complaint) => complaint.id === detailsId);
 
   return (
     <>
@@ -39,7 +45,11 @@ export default function HistoryPage() {
               <tbody>
                 {mine.map((c) => (
                   <tr key={c.id}>
-                    <td className="strong">{c.title}</td>
+                    <td>
+                      <button type="button" className="row-link" onClick={() => setDetailsId(c.id)}>
+                        {c.title}
+                      </button>
+                    </td>
                     <td>{c.category}</td>
                     <td>{shortDate(c.submittedAt)}</td>
                     <td>
@@ -55,7 +65,9 @@ export default function HistoryPage() {
             {mine.map((c) => (
               <li key={c.id} className="card mcard strip" data-status={c.status}>
                 <div className="mcard-top">
-                  <h2 className="mcard-title">{c.title}</h2>
+                  <button type="button" className="row-link mcard-title" onClick={() => setDetailsId(c.id)}>
+                    {c.title}
+                  </button>
                   <StatusBadge status={c.status} />
                 </div>
                 <p className="mcard-meta">
@@ -66,13 +78,14 @@ export default function HistoryPage() {
           </ul>
         </>
       ) : (
-        <div className="empty">
-          <p>You have not submitted any complaints yet.</p>
-          <Button href="/submit" variant="outline">
-            Submit a Complaint
-          </Button>
-        </div>
+        <EmptyState
+          icon={<EmptyFolderIcon />}
+          title="No complaints yet"
+          description="You have not submitted any complaints yet."
+          action={<Button href="/submit" variant="outline">Submit a complaint</Button>}
+        />
       )}
+      {details && <ComplaintDetailsModal complaint={details} onClose={() => setDetailsId(null)} />}
     </>
   );
 }

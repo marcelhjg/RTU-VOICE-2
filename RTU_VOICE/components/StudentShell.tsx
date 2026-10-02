@@ -11,10 +11,11 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import type { ComponentType, ReactNode, SVGProps } from "react";
-import { useAuth } from "@/lib/auth";
 import { ClockIcon, FileIcon, GlobeIcon, HomeIcon, LogoutIcon, MenuIcon, SearchIcon, WarningIcon } from "./Icons";
+import LogoutConfirmationModal from "./LogoutConfirmationModal";
 import Logo, { LogoMark } from "./Logo";
 import RequireRole from "./RequireRole";
+import { useAuth } from "@/lib/auth";
 
 // The links shown in the side menu: where they go, their text, and their icon.
 type IconType = ComponentType<SVGProps<SVGSVGElement>>;
@@ -32,6 +33,7 @@ function Shell({ children }: { children: ReactNode }) {
   const router = useRouter();
   const { logout } = useAuth();
   const [open, setOpen] = useState(false); // is the side menu open?
+  const [logoutOpen, setLogoutOpen] = useState(false);
 
   // Close the menu whenever the user goes to another page.
   useEffect(() => setOpen(false), [pathname]);
@@ -48,12 +50,6 @@ function Shell({ children }: { children: ReactNode }) {
       document.removeEventListener("keydown", onKey);
     };
   }, [open]);
-
-  // Logout: clear the session and go to the login page.
-  const onLogout = () => {
-    logout();
-    router.push("/login");
-  };
 
   return (
     <div className="page">
@@ -114,7 +110,7 @@ function Shell({ children }: { children: ReactNode }) {
         </nav>
         {/* Logout button at the bottom of the menu */}
         <div className="drawer-foot">
-          <button type="button" className="drawer-link" onClick={onLogout}>
+          <button type="button" className="drawer-link" onClick={() => setLogoutOpen(true)}>
             <LogoutIcon />
             Logout
           </button>
@@ -123,6 +119,15 @@ function Shell({ children }: { children: ReactNode }) {
 
       {/* The page content goes here */}
       <main className="app-main">{children}</main>
+      {logoutOpen && (
+        <LogoutConfirmationModal
+          onClose={() => setLogoutOpen(false)}
+          onConfirm={() => {
+            logout();
+            router.replace("/login");
+          }}
+        />
+      )}
     </div>
   );
 }

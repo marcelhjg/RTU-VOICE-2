@@ -40,6 +40,20 @@ export const SearchIcon = (p: SVGProps<SVGSVGElement>) => (
     <path d="m21 21-4.3-4.3" />
   </svg>
 );
+export const FolderSearchIcon = (p: SVGProps<SVGSVGElement>) => (
+  <svg {...base} {...p}>
+    <path d="M3 7.5a2 2 0 0 1 2-2h4.5l2 2H19a2 2 0 0 1 2 2v1.2" />
+    <path d="M3 7.5v9.75A2.75 2.75 0 0 0 5.75 20H12" />
+    <circle cx="17" cy="16" r="3.5" />
+    <path d="m19.5 18.5 2 2" />
+  </svg>
+);
+export const EmptyFolderIcon = (p: SVGProps<SVGSVGElement>) => (
+  <svg {...base} {...p}>
+    <path d="M3 8V6a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v2" />
+    <path d="M3 9h18l-1.4 9.2a2 2 0 0 1-2 1.7H6.4a2 2 0 0 1-2-1.7L3 9Z" />
+  </svg>
+);
 export const EyeIcon = (p: SVGProps<SVGSVGElement>) => (
   <svg {...base} {...p}>
     <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" />

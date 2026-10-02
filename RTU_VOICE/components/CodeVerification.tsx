@@ -2,10 +2,10 @@
 /**
  * components/CodeVerification.tsx
  * -----------------------------------------------------------------
- * The shared screen for entering the 6-digit verification code. It is used
+ * The shared screen for entering the 6-character verification code. It is used
  * by BOTH the register verification (/verify) and the forgot-password
  * verification (/verify-code). Only the title, extra line, button text and
- * next page differ. MOCK: any complete 6-digit code is accepted.
+ * next page differ. MOCK: any complete 6-character code is accepted.
  */
 import { useState } from "react";
 import type { FormEvent, ReactNode } from "react";
@@ -32,11 +32,11 @@ export default function CodeVerification({ title, extraLine, submitLabel, nextRo
   const [error, setError] = useState<string>();
   const { remaining, restart } = useCountdown(60); // 60-second wait before "Resend code" works
 
-  // When the form is submitted: make sure all 6 digits are filled, then go to the next page.
+  // When the form is submitted: make sure all 6 characters are filled, then go to the next page.
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (code.length < CODE_LENGTH) {
-      setError("Enter the 6-digit code");
+      setError("Enter the 6-character code");
       return;
     }
     router.push(nextRoute); // mock verification, no backend in Phase 1
@@ -45,7 +45,7 @@ export default function CodeVerification({ title, extraLine, submitLabel, nextRo
   // The text under the title, including the email the code was "sent" to.
   const subtitle: ReactNode = (
     <>
-      We sent you a 6-digit code to <strong className="accent">{email}</strong>
+      We sent you a 6-character code to <strong className="accent">{email}</strong>
       {extraLine && (
         <>
           <br />

@@ -14,7 +14,8 @@
 "use client"; // this file runs in the browser (it uses React state and localStorage)
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
-import type { Complaint, ComplaintStatus, Department, NewComplaintInput } from "@/types/complaint";
+import { CATEGORIES } from "@/types/complaint";
+import type { Complaint, ComplaintStatus, Department, NewComplaintInput, Priority } from "@/types/complaint";
 import { generateTrackingId } from "./format";
 import { saveEvidence } from "./evidenceStorage";
 import { mockPriority } from "./priority";
@@ -25,6 +26,49 @@ import { readJSON, writeJSON } from "./storage";
 // v3 = the new categories AND departments. Changing this number makes the browser
 // ignore old saved data, so old category / department names do not show up anymore.
 const KEY = "rtuvoice:complaints:v3";
+const STATUSES: readonly ComplaintStatus[] = ["Pending", "Assigned", "In Progress", "Resolved", "Rejected"];
+const PRIORITIES: readonly Priority[] = ["Low", "Mid", "High"];
+
+function isComplaintRecord(value: unknown): value is Complaint {
+  if (typeof value !== "object" || value === null || Array.isArray(value)) return false;
+  const record = value as Record<string, unknown>;
+  const evidence = record.evidence;
+  const evidenceRecord =
+    typeof evidence === "object" && evidence !== null && !Array.isArray(evidence)
+      ? (evidence as Record<string, unknown>)
+      : null;
+  const evidenceIsValid =
+    evidence === undefined ||
+    (evidenceRecord !== null &&
+      typeof evidenceRecord.name === "string" &&
+      typeof evidenceRecord.size === "number" &&
+      Number.isFinite(evidenceRecord.size) &&
+      evidenceRecord.size >= 0);
+  const assignedAtIsValid =
+    record.assignedAt === undefined ||
+    (typeof record.assignedAt === "string" && Number.isFinite(Date.parse(record.assignedAt)));
+
+  return (
+    typeof record.id === "string" && record.id.trim().length > 0 &&
+    typeof record.title === "string" &&
+    CATEGORIES.some((category) => category === record.category) &&
+    typeof record.description === "string" &&
+    typeof record.submittedAt === "string" &&
+    Number.isFinite(Date.parse(record.submittedAt)) &&
+    assignedAtIsValid &&
+    STATUSES.includes(record.status as ComplaintStatus) &&
+    typeof record.approved === "boolean" &&
+    (record.priority === undefined || PRIORITIES.includes(record.priority as Priority)) &&
+    (record.department === undefined || CATEGORIES.some((department) => department === record.department)) &&
+    evidenceIsValid &&
+    typeof record.ownerEmail === "string" &&
+    (record.reassignReason === undefined || typeof record.reassignReason === "string")
+  );
+}
+
+function isComplaintList(value: unknown): value is Complaint[] {
+  return Array.isArray(value) && value.every(isComplaintRecord);
+}
 
 // Everything the rest of the app is allowed to use from this file.
 interface ComplaintsContextValue {
@@ -51,8 +95,8 @@ export function ComplaintProvider({ children }: { children: ReactNode }) {
 
   // When the page opens: load the saved complaints from the browser, if there are any.
   useEffect(() => {
-    const stored = readJSON<Complaint[] | null>(KEY, null);
-    if (stored) setComplaints(stored);
+    const stored = readJSON<unknown>(KEY, null);
+    if (isComplaintList(stored)) setComplaints(stored);
     setLoaded(true);
   }, []);
 

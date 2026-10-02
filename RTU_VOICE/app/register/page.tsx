@@ -4,7 +4,7 @@
  * -----------------------------------------------------------------
  * The REGISTER (Create Account) page. It checks the form, saves the
  * student's name, remembers the email for the next screen, then goes to
- * /verify to enter the 6-digit code.
+ * /verify to enter the 6-character code.
  */
 import Link from "next/link";
 import { useRouter } from "next/navigation";
